@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "example", "example", "{E53A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.File", "src\Serilog.Sinks.File\Serilog.Sinks.File.csproj", "{ECDED0C8-F62F-46AC-B137-18729F2B1D2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.File.GzArchive", "src\Serilog.Sinks.File.GzArchive\Serilog.Sinks.File.GzArchive.csproj", "{0F475F5B-7742-4C72-85CD-2752D479B27A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.File.GzArchive", "src\Serilog.Sinks.File.GzArchive\Serilog.Sinks.File.GzArchive.csproj", "{0F475F5B-7742-4C72-85CD-2752D479B27A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{55DAB832-33C7-49A9-8602-F67AC5BFBE2C}"
 	ProjectSection(SolutionItems) = preProject
@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{55DAB8
 		assets\Serilog.snk = assets\Serilog.snk
 		assets\Serilog.svg = assets\Serilog.svg
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.File.Tests", "test\Serilog.Sinks.File.Console\Serilog.Sinks.File.Tests\Serilog.Sinks.File.Tests.csproj", "{29D8AF18-C935-4D0B-B65A-4F9D1406101A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +36,10 @@ Global
 		{0F475F5B-7742-4C72-85CD-2752D479B27A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F475F5B-7742-4C72-85CD-2752D479B27A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F475F5B-7742-4C72-85CD-2752D479B27A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29D8AF18-C935-4D0B-B65A-4F9D1406101A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29D8AF18-C935-4D0B-B65A-4F9D1406101A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29D8AF18-C935-4D0B-B65A-4F9D1406101A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29D8AF18-C935-4D0B-B65A-4F9D1406101A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,6 +47,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{ECDED0C8-F62F-46AC-B137-18729F2B1D2E} = {3A094012-C1E5-437B-9D91-8A2971F3DBE4}
 		{0F475F5B-7742-4C72-85CD-2752D479B27A} = {3A094012-C1E5-437B-9D91-8A2971F3DBE4}
+		{29D8AF18-C935-4D0B-B65A-4F9D1406101A} = {E89B0BA8-8612-4129-ADE1-0F65CDFA6418}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9DDD6D73-4E63-4585-A278-49DBEC0A1E8B}
