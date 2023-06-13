@@ -1,0 +1,72 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Write Serilog events to text files in plain or JSON format.</Description>
+    <VersionPrefix>5.0.1</VersionPrefix>
+    <Authors>Ashkan Shirian</Authors>
+    <Copyright>Copyright © Ashkan Shirian 2023</Copyright>
+    <TargetFrameworks>netstandard1.3;netstandard1.6;netstandard2.0;netstandard2.1;net5.0;net6.0;net7.0</TargetFrameworks>
+    <LangVersion>11.0</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageTags>serilog;file</PackageTags>
+    <PackageProjectUrl>https://github.com/ashkan89/serilog-sinks-fileex</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/ashkan89/serilog-sinks-fileex</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <RootNamespace>Serilog</RootNamespace>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DisableImplicitFrameworkReferences Condition=" '$(TargetFramework)' == 'netstandard1.3' ">true</DisableImplicitFrameworkReferences>
+    <EnableSourceLink Condition="'$(EnableSourceLink)' == ''">false</EnableSourceLink>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <Title>Serilog.Sinks.FileEx</Title>
+    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageReadmeFile></PackageReadmeFile>
+    <PackageIcon>serilog-sink-nuget.png</PackageIcon>
+    <PackageId>Serilog.Sinks.FileEx</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Sinks\File\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog" Version="2.12.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <PackageReference Include="System.IO.Compression" Version="4.3.0" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <DefineConstants>$(DefineConstants);ATOMIC_APPEND;HRESULTS</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' != 'net45'  ">
+    <DefineConstants>$(DefineConstants);OS_MUTEX</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>$(AssemblyName).Test</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\assets\serilog-sink-nuget.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
