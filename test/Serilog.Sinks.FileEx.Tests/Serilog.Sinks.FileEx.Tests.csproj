@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Serilog.Sinks.File.GzArchive\Serilog.Sinks.File.GzArchive.csproj" />
+    <ProjectReference Include="..\..\src\Serilog.Sinks.FileEx\Serilog.Sinks.FileEx.csproj" />
     <ProjectReference Include="..\..\src\Serilog.Sinks.File\Serilog.Sinks.FileEx.csproj" />
   </ItemGroup>
 
