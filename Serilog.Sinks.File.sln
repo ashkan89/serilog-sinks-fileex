@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E89B0BA8-8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "example", "example", "{E53A4D37-60F8-4375-A0AE-0FB8FD9574C4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.File", "src\Serilog.Sinks.File\Serilog.Sinks.File.csproj", "{ECDED0C8-F62F-46AC-B137-18729F2B1D2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.FileEx", "src\Serilog.Sinks.File\Serilog.Sinks.FileEx.csproj", "{ECDED0C8-F62F-46AC-B137-18729F2B1D2E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.File.GzArchive", "src\Serilog.Sinks.File.GzArchive\Serilog.Sinks.File.GzArchive.csproj", "{0F475F5B-7742-4C72-85CD-2752D479B27A}"
 EndProject
@@ -20,9 +20,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{55DAB8
 		assets\Serilog.svg = assets\Serilog.svg
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.File.Tests", "test\Serilog.Sinks.File.Tests\Serilog.Sinks.File.Tests.csproj", "{EFF70F99-465C-4CBC-B06A-F0DB68BF82C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.FileEx.Tests", "test\Serilog.Sinks.File.Tests\Serilog.Sinks.FileEx.Tests.csproj", "{EFF70F99-465C-4CBC-B06A-F0DB68BF82C6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.File.Console", "test\Serilog.Sinks.File.Console\Serilog.Sinks.File.Console.csproj", "{863C1E31-F186-4D7E-92DC-58B762AB2844}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.FileEx.Console", "test\Serilog.Sinks.File.Console\Serilog.Sinks.FileEx.Console.csproj", "{863C1E31-F186-4D7E-92DC-58B762AB2844}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
