@@ -1,5 +1,6 @@
 ﻿using Serilog.Debugging;
 using System.IO.Compression;
+using Serilog.Sinks.FileEx;
 
 namespace Serilog.Sinks.File.GzArchive;
 
@@ -74,9 +75,9 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
             var str1 = _targetDirectory != null ? TokenExpander.Expand(_targetDirectory) : Path.GetDirectoryName(path);
 
             if (!Directory.Exists(str1))
-                Directory.CreateDirectory(str1);
+                Directory.CreateDirectory(str1!);
 
-            var str2 = Path.Combine(str1, path2);
+            var str2 = Path.Combine(str1!, path2);
 
             if (_compressionLevel == CompressionLevel.NoCompression)
             {
@@ -94,7 +95,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
             if (_retainedFileCountLimit <= 0 || IsArchivePathTokenised)
                 return;
 
-            RemoveExcessFiles(str1);
+            RemoveExcessFiles(str1!);
         }
         catch (Exception ex)
         {

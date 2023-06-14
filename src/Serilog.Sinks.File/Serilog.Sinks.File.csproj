@@ -22,7 +22,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <Title>Serilog.Sinks.FileEx</Title>
-    <PackageReleaseNotes>Fixed missmatch namespace and fix it</PackageReleaseNotes>
+    <PackageReleaseNotes>change modifiers</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageReadmeFile></PackageReadmeFile>
     <PackageIcon>serilog-sink-nuget.png</PackageIcon>

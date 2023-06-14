@@ -3,6 +3,7 @@ using System.Reflection;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.File.Tests.Support;
+using Serilog.Sinks.FileEx;
 
 namespace Serilog.Sinks.File.Tests
 {

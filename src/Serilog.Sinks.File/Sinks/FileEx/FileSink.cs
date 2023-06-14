@@ -58,7 +58,7 @@ public sealed class FileSink : IFileSink, IDisposable
             Directory.CreateDirectory(directory);
         }
 
-        Stream outputStream = _underlyingStream = System.IO.File.Open(path, FileMode.Append, FileAccess.Write, FileShare.Read);
+        Stream outputStream = _underlyingStream = File.Open(path, FileMode.Append, FileAccess.Write, FileShare.Read);
         if (_fileSizeLimitBytes != null)
         {
             outputStream = _countingStreamWrapper = new WriteCountingStream(_underlyingStream);

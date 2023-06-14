@@ -168,8 +168,10 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
             {
                 _roller.GetLogFilePath(out var currentPath);
                 var fileInfo = new FileInfo(currentPath);
+                var mustRoll = MustRoll(now);
                 //we check of we have reach file size limit, if not we keep the same file. If we don't have roll on file size enable, we will create a new file as soon as one exists even if it is empty.
-                if (System.IO.File.Exists(currentPath) && MustRoll(now) && (_rollOnFileSizeLimit ? fileInfo.Length >= _fileSizeLimitBytes : fileInfo.Length > 0))
+                if (fileInfo.Exists && mustRoll ||
+                    (fileInfo.Exists && _rollOnFileSizeLimit ? fileInfo.Length >= _fileSizeLimitBytes : (fileInfo is { Exists: true, Length: > 0 } && mustRoll)))
                 {
                     for (var attempt = 0; attempt < maxAttempts; attempt++)
                     {
@@ -177,12 +179,12 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
                             sequence, out var path);
                         try
                         {
-                            System.IO.File.Move(currentPath, path);
+                            File.Move(currentPath, path);
                             _currentFileSequence = sequence;
                         }
                         catch (IOException ex)
                         {
-                            if (IOErrors.IsLockedFile(ex) || System.IO.File.Exists(path))
+                            if (IOErrors.IsLockedFile(ex) || File.Exists(path))
                             {
                                 SelfLog.WriteLine(
                                     "File target {0} was locked or exists, attempting to open next in sequence (attempt {1})",
@@ -274,6 +276,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
 
         _roller.GetLogFilePath(out var currentPath);
         var fileInfo = new FileInfo(currentPath);
+
         return fileInfo.Exists && fileInfo.LastWriteTime < currentCheckpoint;
     }
 
@@ -306,7 +309,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
             try
             {
                 _hooks?.OnFileDeleting(fullPath);
-                System.IO.File.Delete(fullPath);
+                File.Delete(fullPath);
             }
             catch (Exception ex)
             {
