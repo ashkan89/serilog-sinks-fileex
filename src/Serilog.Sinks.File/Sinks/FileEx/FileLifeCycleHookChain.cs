@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Serilog.Sinks.File;
+namespace Serilog.Sinks.FileEx;
 
 internal class FileLifeCycleHookChain : FileLifecycleHooks
 {

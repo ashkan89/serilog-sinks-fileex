@@ -2,7 +2,7 @@
 using Serilog.Events;
 using Serilog.Formatting;
 
-namespace Serilog.Sinks.File;
+namespace Serilog.Sinks.FileEx;
 
 /// <summary>
 /// Write log events to a disk file.

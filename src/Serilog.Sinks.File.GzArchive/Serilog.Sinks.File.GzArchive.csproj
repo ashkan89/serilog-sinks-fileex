@@ -13,7 +13,7 @@
     <AssemblyName>Serilog.Sinks.File.GzArchive</AssemblyName>
     <RootNamespace>Serilog.Sinks.File.GzArchive</RootNamespace>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <RepositoryUrl>https://github.com/ashkan89/serilog-sinks-file-gzarchive</RepositoryUrl>
+    <RepositoryUrl>https://github.com/ashkan89/serilog-sinks-fileex</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <PackageReadmeFile></PackageReadmeFile>
@@ -26,7 +26,7 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <PackageTags>serilog;file;compression;gzip;archive</PackageTags>
-    <PackageProjectUrl>https://github.com/ashkan89/serilog-sinks-file-gzarchive</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/ashkan89/serilog-sinks-fileex</PackageProjectUrl>
     <PackageId>$(AssemblyName)</PackageId>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Title>Serilog.Sinks.File.GzArchive</Title>
@@ -60,7 +60,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Serilog.Sinks.FileEx" Version="5.0.1" />
+    <PackageReference Include="Serilog.Sinks.FileEx" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,7 +2,7 @@
 using Serilog.Debugging;
 using Serilog.Events;
 
-namespace Serilog.Sinks.File;
+namespace Serilog.Sinks.FileEx;
 
 /// <summary>
 /// A sink wrapper that periodically flushes the wrapped sink to disk.

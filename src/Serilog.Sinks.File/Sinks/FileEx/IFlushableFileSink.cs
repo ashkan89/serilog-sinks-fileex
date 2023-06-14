@@ -1,4 +1,4 @@
-﻿namespace Serilog.Sinks.File;
+﻿namespace Serilog.Sinks.FileEx;
 
 /// <summary>
 /// Supported by (file-based) sinks that can be explicitly flushed.

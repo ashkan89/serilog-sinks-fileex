@@ -4,7 +4,7 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Formatting;
 
-namespace Serilog.Sinks.File;
+namespace Serilog.Sinks.FileEx;
 
 internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisposable
 {

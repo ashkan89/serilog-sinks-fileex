@@ -1,4 +1,4 @@
-﻿namespace Serilog.Sinks.File;
+﻿namespace Serilog.Sinks.FileEx;
 
 /// <summary>
 /// Specifies the frequency at which the log file should roll.

@@ -1,4 +1,4 @@
-﻿namespace Serilog.Sinks.File;
+﻿namespace Serilog.Sinks.FileEx;
 
 // ReSharper disable once InconsistentNaming
 internal static class IOErrors

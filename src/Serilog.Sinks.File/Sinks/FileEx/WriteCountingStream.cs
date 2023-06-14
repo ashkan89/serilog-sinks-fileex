@@ -1,4 +1,4 @@
-﻿namespace Serilog.Sinks.File;
+﻿namespace Serilog.Sinks.FileEx;
 
 internal sealed class WriteCountingStream : Stream
 {

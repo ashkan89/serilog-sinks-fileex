@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace Serilog.Sinks.File;
+namespace Serilog.Sinks.FileEx;
 
 internal class PathRoller
 {

@@ -1,7 +1,7 @@
 ﻿using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Sinks.File;
+namespace Serilog.Sinks.FileEx;
 
 /// <summary>
 /// Exists only for the convenience of <see cref="RollingFileSink"/>, which

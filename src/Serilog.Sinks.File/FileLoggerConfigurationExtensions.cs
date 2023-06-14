@@ -7,7 +7,7 @@ using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Display;
 using Serilog.Formatting.Json;
-using Serilog.Sinks.File;
+using Serilog.Sinks.FileEx;
 
 namespace Serilog;
 
