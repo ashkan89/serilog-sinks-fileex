@@ -62,7 +62,6 @@ Various bug fix and improvments</PackageReleaseNotes>
 
   <ItemGroup>
     <ProjectReference Include="..\Serilog.Sinks.FileEx\Serilog.Sinks.FileEx.csproj" />
-    <ProjectReference Include="..\Serilog.Sinks.File\Serilog.Sinks.FileEx.csproj" />
   </ItemGroup>
 
   <ItemGroup>
