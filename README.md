@@ -1,1 +1,1 @@
-# Serilog.Sinks.File
+# Serilog.Sinks.FileEx
