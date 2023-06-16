@@ -26,6 +26,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
     private DateTime? _nextCheckpoint;
     private IFileSink _currentFile = null!;
     private int? _currentFileSequence;
+    private bool _initialCall = true;
 
     private readonly object _syncLock = new();
 
@@ -65,6 +66,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
         _preserveLogFileName = preserveLogFileName;
         _rollOnEachProcessRun = rollOnEachProcessRun;
         _useLastWriteAsTimestamp = useLastWriteAsTimestamp;
+        _currentFileSequence = GetCurrentSequence();
     }
 
     public void Emit(LogEvent logEvent)
@@ -87,7 +89,19 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
 
     private void AlignCurrentFileTo(DateTime now, bool nextSequence = false)
     {
-        if (!_nextCheckpoint.HasValue)
+        if (!_nextCheckpoint.HasValue && _rollOnEachProcessRun && !nextSequence)
+        {
+            int? minSequence;
+
+            if (_currentFileSequence == null)
+                minSequence = 1;
+            else
+                minSequence = _currentFileSequence.Value + 1;
+
+            CloseFile();
+            OpenFile(now, minSequence);
+        }
+        else if (!_nextCheckpoint.HasValue)
         {
             OpenFile(now);
         }
@@ -105,6 +119,27 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
             CloseFile();
             OpenFile(now, minSequence);
         }
+    }
+
+    private int? GetCurrentSequence()
+    {
+        int? currentSequence = null;
+
+        if (_rollOnEachProcessRun)
+        {
+            var potentialMatches = Directory.GetFiles(_roller.LogFileDirectory, _roller.DirectorySearchPattern)
+                .Select(Path.GetFileName);
+
+            var newestFile = _roller
+                .SelectMatches(potentialMatches)
+                .OrderByDescending(m => m.DateTime)
+                .ThenByDescending(m => m.SequenceNumber)
+                .FirstOrDefault();
+
+            currentSequence = newestFile?.SequenceNumber;
+        }
+
+        return currentSequence;
     }
 
     private void OpenFile(DateTime now, int? minSequence = null)
@@ -258,6 +293,8 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
                 }
 
                 ApplyRetentionPolicy(path);
+                _nextCheckpoint = _roller.GetNextCheckpoint(now) ?? now.AddMinutes(30);
+
                 return;
             }
         }
@@ -267,8 +304,11 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
 
     private bool MustRoll(DateTime now)
     {
-        if (_rollOnEachProcessRun)
+        if (_rollOnEachProcessRun && _initialCall)
+        {
+            _initialCall = false;
             return true;
+        }
 
         var currentCheckpoint = _roller.GetCurrentCheckpoint(now);
         if (!currentCheckpoint.HasValue)
