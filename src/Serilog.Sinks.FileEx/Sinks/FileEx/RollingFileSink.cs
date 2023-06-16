@@ -27,6 +27,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
     private IFileSink _currentFile = null!;
     private int? _currentFileSequence;
     private bool _initialCall = true;
+    private string _currentFilePath = string.Empty;
 
     private readonly object _syncLock = new();
 
@@ -202,6 +203,8 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
             lock (_syncLock)
             {
                 _roller.GetLogFilePath(out var currentPath);
+                _currentFilePath = currentPath;
+
                 var fileInfo = new FileInfo(currentPath);
                 var mustRoll = MustRoll(now);
                 //we check of we have reach file size limit, if not we keep the same file. If we don't have roll on file size enable, we will create a new file as soon as one exists even if it is empty.
@@ -214,7 +217,10 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
                             sequence, out var path);
                         try
                         {
+                            _hooks?.OnFileRolling(currentPath);
                             File.Move(currentPath, path);
+                            _hooks?.OnFileRolled(path);
+
                             _currentFileSequence = sequence;
                         }
                         catch (IOException ex)
@@ -268,6 +274,12 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
 
                 try
                 {
+                    var mustRoll = !string.IsNullOrEmpty(_currentFilePath) && Path.GetFileName(path) != Path.GetFileName(_currentFilePath);
+                    if (mustRoll)
+                    {
+                        _hooks?.OnFileRolling(_currentFilePath);
+                    }
+
                     _currentFile = _shared
                         ?
 #pragma warning disable 618
@@ -276,6 +288,12 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
 #pragma warning restore 618
                         new FileSink(path, _textFormatter, _fileSizeLimitBytes, _encoding, _buffered, _hooks);
 
+                    if (mustRoll)
+                    {
+                        _hooks?.OnFileRolled(_currentFilePath);
+                    }
+
+                    _currentFilePath = path;
                     _currentFileSequence = sequence;
                 }
                 catch (IOException ex)

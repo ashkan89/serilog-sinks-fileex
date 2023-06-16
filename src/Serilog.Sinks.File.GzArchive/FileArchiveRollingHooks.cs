@@ -13,6 +13,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
     private readonly string? _fileNameFormat;
     private readonly int _retainedFileCountLimit;
     private readonly string? _targetDirectory;
+    private readonly CompressSenario _compressSenario;
     private const int DefaultRetainedFileCountLimit = 31;
     private const string DefaultFileFormat = "yyyyMMdd";
 
@@ -33,6 +34,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
         _fileNameFormat = DefaultFileFormat;
         _compressionLevel = compressionLevel;
         _targetDirectory = targetDirectory;
+        _compressSenario = CompressSenario.OnDelete;
     }
 
     /// <summary>
@@ -40,11 +42,13 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
     /// </summary>
     /// <param name="retainedFileCountLimit"></param>
     /// <param name="compressionLevel"></param>
+    /// <param name="compressSenario"></param>
     /// <param name="fileNameFormat"></param>
     /// <param name="targetDirectory"></param>
     /// <exception cref="ArgumentException"></exception>
     public FileArchiveRollingHooks(CompressionLevel compressionLevel = CompressionLevel.Fastest,
         int retainedFileCountLimit = DefaultRetainedFileCountLimit,
+        CompressSenario compressSenario = CompressSenario.OnDelete,
       string? fileNameFormat = default,
       string? targetDirectory = default)
     {
@@ -61,6 +65,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
         _fileNameFormat = fileNameFormat ?? DefaultFileFormat;
         _retainedFileCountLimit = retainedFileCountLimit;
         _targetDirectory = targetDirectory;
+        _compressSenario = compressSenario;
     }
 
     /// <summary>
@@ -71,31 +76,26 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
     {
         try
         {
-            var path2 = GenerateFileName(path);
-            var str1 = _targetDirectory != null ? TokenExpander.Expand(_targetDirectory) : Path.GetDirectoryName(path);
+            if (_compressSenario.HasFlag(CompressSenario.OnDelete))
+                CompressFile(path);
+        }
+        catch (Exception ex)
+        {
+            SelfLog.WriteLine("Error while archiving file {0}: {1}", path, ex);
+            throw;
+        }
+    }
 
-            if (!Directory.Exists(str1))
-                Directory.CreateDirectory(str1!);
-
-            var str2 = Path.Combine(str1!, path2);
-
-            if (_compressionLevel == CompressionLevel.NoCompression)
-            {
-                System.IO.File.Copy(path, str2, true);
-            }
-            else
-            {
-                using var fileStream1 = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-                using var fileStream2 = new FileStream(str2, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
-                using var destination = new GZipStream(fileStream2, _compressionLevel);
-
-                fileStream1.CopyTo(destination);
-            }
-
-            if (_retainedFileCountLimit <= 0 || IsArchivePathTokenised)
-                return;
-
-            RemoveExcessFiles(str1!);
+    /// <summary>
+    /// OnFileRolling
+    /// </summary>
+    /// <param name="path"></param>
+    public override void OnFileRolling(string path)
+    {
+        try
+        {
+            if (_compressSenario.HasFlag(CompressSenario.OnRoll))
+                CompressFile(path);
         }
         catch (Exception ex)
         {
@@ -131,6 +131,35 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
         return _compressionLevel != CompressionLevel.NoCompression ?
             $"{Path.GetFileName(path)}{DateTime.Now.ToString(_fileNameFormat)}.gz" :
             $"{Path.GetFileNameWithoutExtension(path)}{DateTime.Now.ToString(_fileNameFormat)}.{Path.GetExtension(path)}";
+    }
+
+    private void CompressFile(string path)
+    {
+        var path2 = GenerateFileName(path);
+        var str1 = _targetDirectory != null ? TokenExpander.Expand(_targetDirectory) : Path.GetDirectoryName(path)!;
+
+        if (!Directory.Exists(str1))
+            Directory.CreateDirectory(str1!);
+
+        var str2 = Path.Combine(str1!, path2);
+
+        if (_compressionLevel == CompressionLevel.NoCompression)
+        {
+            System.IO.File.Copy(path, str2, true);
+        }
+        else
+        {
+            using var fileStream1 = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using var fileStream2 = new FileStream(str2, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
+            using var destination = new GZipStream(fileStream2, _compressionLevel);
+
+            fileStream1.CopyTo(destination);
+        }
+
+        if (_retainedFileCountLimit <= 0 || IsArchivePathTokenised)
+            return;
+
+        RemoveExcessFiles(str1!);
     }
 
     private class LogFileComparer : IComparer<FileInfo>

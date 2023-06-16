@@ -45,6 +45,20 @@ public abstract class FileLifecycleHooks
     public virtual void OnFileDeleting(string path) { }
 
     /// <summary>
+    /// Called before the rolling log file is performed.
+    /// This can be used to copy the current rolling log to an archive location or send to a backup server.
+    /// </summary>
+    /// <param name="path">The full path to the file being rolled.</param>
+    public virtual void OnFileRolling(string path) { }
+
+    /// <summary>
+    /// Called after the rolling log file is performed.
+    /// This can be used to copy the current rolled log to an archive location or send to a backup server.
+    /// </summary>
+    /// <param name="path">The full path (with new file name) to the rolled file.</param>
+    public virtual void OnFileRolled(string path) { }
+
+    /// <summary>
     /// Creates a chain of <see cref="FileLifecycleHooks"/> that have their methods called sequentially
     /// Can be used to compose <see cref="FileLifecycleHooks"/> together; e.g. add header information to each log file and
     /// compress it.

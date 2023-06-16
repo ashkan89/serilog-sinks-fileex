@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Write Serilog events to text files in plain or JSON format.</Description>
-    <VersionPrefix>5.0.6</VersionPrefix>
+    <VersionPrefix>5.1.0</VersionPrefix>
     <Authors>Ashkan Shirian</Authors>
     <Copyright>Copyright © Ashkan Shirian 2023</Copyright>
     <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard1.5;netstandard1.6;netstandard2.0;netstandard2.1;net5.0;net6.0;net7.0</TargetFrameworks>
@@ -22,7 +22,8 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <Title>Serilog.Sinks.FileEx</Title>
-    <PackageReleaseNotes>Various bug fixes and improvments</PackageReleaseNotes>
+    <PackageReleaseNotes>- Added OnFileRolling and OnFileRolled defenition in FileLifecycleHooks
+-Various bug fixes and improvments</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageReadmeFile></PackageReadmeFile>
     <PackageIcon>serilog-sink-nuget.png</PackageIcon>
