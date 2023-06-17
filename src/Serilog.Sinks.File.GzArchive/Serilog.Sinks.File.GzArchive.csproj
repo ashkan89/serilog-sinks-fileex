@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Plugin for the Serilog File sink that archives completed log files, optionally compressing them.</Description>
-    <VersionPrefix>1.1.0</VersionPrefix>
+    <VersionPrefix>1.1.1</VersionPrefix>
     <Authors>Ashkan Shirian</Authors>
     <Copyright>Copyright © Ashkan Shirian 2023</Copyright>
     <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard1.5;netstandard1.6;netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0;net7.0</TargetFrameworks>
@@ -30,9 +30,10 @@
     <PackageId>$(AssemblyName)</PackageId>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Title>Serilog.Sinks.File.GzArchive</Title>
-    <PackageReleaseNotes>Update Dependency Serilog.Sinks.FileEx to 5.1.0
-- Added OnFileRolling and OnFileRolled implementation in Hook
-- Added CompressSenario to choose when to archive and compress log files</PackageReleaseNotes>
+    <PackageReleaseNotes>
+      Update Dependency Serilog.Sinks.FileEx to 5.1.1
+      -Added Support for netcoreapp3.1
+    </PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageIcon>serilog-sink-nuget.png</PackageIcon>
   </PropertyGroup>
