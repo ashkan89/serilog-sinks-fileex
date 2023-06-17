@@ -12,7 +12,7 @@ var sw = System.Diagnostics.Stopwatch.StartNew();
 Log.Logger = new LoggerConfiguration()
     .WriteTo
     .FileEx("logs/LogFile.log", "-yyyy-MM-dd-HHmm", LogEventLevel.Debug, rollingInterval: RollingInterval.Minute, rollOnEachProcessRun: false,
-        fileSizeLimitBytes: (10L * 1024), rollOnFileSizeLimit: true, retainedFileCountLimit: 5, preserveLogFilename: true,
+        fileSizeLimitBytes: (10L * 1024), rollOnFileSizeLimit: true, retainedFileCountLimit: 5, preserveLogFileName: true,
         hooks: new FileArchiveRollingHooks(CompressionLevel.SmallestSize,
             targetDirectory: "logs", fileNameFormat: "-yyyy-MM-dd",
             //compressSenario: CompressSenario.OnDelete | CompressSenario.OnRoll,

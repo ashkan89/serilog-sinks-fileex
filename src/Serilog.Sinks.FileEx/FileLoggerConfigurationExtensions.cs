@@ -53,7 +53,7 @@ public static class FileLoggerConfigurationExtensions
         TimeSpan? flushToDiskInterval)
     {
         return FileEx(sinkConfiguration, path, restrictedToMinimumLevel, outputTemplate, formatProvider, fileSizeLimitBytes,
-            levelSwitch, buffered, shared, flushToDiskInterval, RollingInterval.Infinite, false, null, null, null);
+            levelSwitch, buffered, shared, flushToDiskInterval, RollingInterval.Infinite, false, null);
     }
 
     /// <summary>
@@ -92,7 +92,7 @@ public static class FileLoggerConfigurationExtensions
         TimeSpan? flushToDiskInterval)
     {
         return FileEx(sinkConfiguration, formatter, path, restrictedToMinimumLevel, fileSizeLimitBytes, levelSwitch,
-            buffered, shared, flushToDiskInterval, RollingInterval.Infinite, false, null, null, null);
+            buffered, shared, flushToDiskInterval, RollingInterval.Infinite, false, null);
     }
 
     /// <summary>
@@ -357,7 +357,7 @@ public static class FileLoggerConfigurationExtensions
         IFormatProvider formatProvider,
         LoggingLevelSwitch levelSwitch)
     {
-        return FileEx(sinkConfiguration, path, restrictedToMinimumLevel, outputTemplate, formatProvider, levelSwitch, null, null);
+        return FileEx(sinkConfiguration, path, restrictedToMinimumLevel, outputTemplate, formatProvider, levelSwitch, null);
     }
 
     /// <summary>
@@ -511,7 +511,7 @@ public static class FileLoggerConfigurationExtensions
     /// <param name="encoding">Character encoding used to write the text file. The default is UTF-8 without BOM.</param>
     /// <param name="hooks">Optionally enables hooking into log file lifecycle events.</param>
     /// <param name="retainedFileTimeLimit"></param>
-    /// <param name="preserveLogFilename">Avoid the log file name to change after each roll, on roll the log file is copied to a new file and the current file is restarted empty</param>
+    /// <param name="preserveLogFileName">Avoid the log file name to change after each roll, on roll the log file is copied to a new file and the current file is restarted empty</param>
     /// <param name="rollOnEachProcessRun">Roll the name of the log file every time the process starts.</param>
     /// <param name="useLastWriteAsTimestamp">When the file is rolled, the last write timestamp of the log file is used instead of the current timestamp.</param>
     /// <returns>Configuration object allowing method chaining.</returns>
@@ -533,7 +533,7 @@ public static class FileLoggerConfigurationExtensions
         Encoding encoding = null!,
         FileLifecycleHooks hooks = null!,
         TimeSpan? retainedFileTimeLimit = default,
-        bool preserveLogFilename = true,
+        bool preserveLogFileName = true,
         bool rollOnEachProcessRun = true,
         bool useLastWriteAsTimestamp = false)
     {
@@ -545,7 +545,7 @@ public static class FileLoggerConfigurationExtensions
         return FileEx(sinkConfiguration, formatter, path, periodFormat, restrictedToMinimumLevel, fileSizeLimitBytes,
             levelSwitch, buffered, shared, flushToDiskInterval,
             rollingInterval, rollOnFileSizeLimit, retainedFileCountLimit, encoding, hooks,
-            retainedFileTimeLimit, preserveLogFilename, rollOnEachProcessRun, useLastWriteAsTimestamp);
+            retainedFileTimeLimit, preserveLogFileName, rollOnEachProcessRun, useLastWriteAsTimestamp);
     }
 
     /// <summary>

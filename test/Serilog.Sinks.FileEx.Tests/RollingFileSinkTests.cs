@@ -3,9 +3,8 @@ using System.Reflection;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.File.Tests.Support;
-using Serilog.Sinks.FileEx;
 
-namespace Serilog.Sinks.File.Tests
+namespace Serilog.Sinks.FileEx.Tests
 {
     public class RollingFileSinkTests
     {
@@ -208,7 +207,7 @@ namespace Serilog.Sinks.File.Tests
             var fileName = Some.String() + ".txt";
             using var temp = new TempFolder();
             using var log = new LoggerConfiguration()
-                .WriteTo.FileEx(Path.Combine(temp.Path, fileName), rollOnFileSizeLimit: true, fileSizeLimitBytes: 1, preserveLogFilename: true)
+                .WriteTo.FileEx(Path.Combine(temp.Path, fileName), rollOnFileSizeLimit: true, fileSizeLimitBytes: 1, preserveLogFileName: true)
                 .CreateLogger();
             LogEvent e1 = Some.InformationEvent(),
                 e2 = Some.InformationEvent(e1.Timestamp),
@@ -235,7 +234,7 @@ namespace Serilog.Sinks.File.Tests
             using var temp = new TempFolder();
             using var log = new LoggerConfiguration()
                 .WriteTo.FileEx(Path.Combine(temp.Path, fileName), retainedFileCountLimit: null,
-                    preserveLogFilename: true, rollingInterval: RollingInterval.Day)
+                    preserveLogFileName: true, rollingInterval: RollingInterval.Day)
                 .CreateLogger();
             LogEvent e1 = Some.InformationEvent(),
                 e2 = Some.InformationEvent(e1.Timestamp.AddDays(1)),
@@ -279,7 +278,7 @@ namespace Serilog.Sinks.File.Tests
             {
                 using var log = new LoggerConfiguration()
                     .WriteTo.FileEx(Path.Combine(temp.Path, fileName), retainedFileCountLimit: null,
-                        preserveLogFilename: true, rollingInterval: RollingInterval.Day,
+                        preserveLogFileName: true, rollingInterval: RollingInterval.Day,
                         rollOnEachProcessRun: false)
                     .CreateLogger();
                 var e1 = Some.InformationEvent();
@@ -314,7 +313,7 @@ namespace Serilog.Sinks.File.Tests
 
                 using (var log = new LoggerConfiguration()
                     .WriteTo.FileEx(file, retainedFileCountLimit: null,
-                        preserveLogFilename: true, rollingInterval: RollingInterval.Day,
+                        preserveLogFileName: true, rollingInterval: RollingInterval.Day,
                         rollOnEachProcessRun: true)
                     .CreateLogger())
                 {
@@ -358,7 +357,7 @@ namespace Serilog.Sinks.File.Tests
 
                 using (var log = new LoggerConfiguration()
                     .WriteTo.FileEx(file, retainedFileCountLimit: null,
-                        preserveLogFilename: true, rollingInterval: RollingInterval.Hour,
+                        preserveLogFileName: true, rollingInterval: RollingInterval.Hour,
                         rollOnEachProcessRun: true)
                     .CreateLogger())
                 {
@@ -402,7 +401,7 @@ namespace Serilog.Sinks.File.Tests
 
                 using (var log = new LoggerConfiguration()
                     .WriteTo.FileEx(file, retainedFileCountLimit: null,
-                        preserveLogFilename: true, rollingInterval: RollingInterval.Hour,
+                        preserveLogFileName: true, rollingInterval: RollingInterval.Hour,
                         rollOnEachProcessRun: true, useLastWriteAsTimestamp: true)
                     .CreateLogger())
                 {
@@ -424,7 +423,7 @@ namespace Serilog.Sinks.File.Tests
             for (var i = 0; i < 4; i++)
             {
                 using var log = new LoggerConfiguration()
-                    .WriteTo.FileEx(Path.Combine(temp.Path, fileName), fileSizeLimitBytes: 1000, rollOnFileSizeLimit: true, preserveLogFilename: true)
+                    .WriteTo.FileEx(Path.Combine(temp.Path, fileName), fileSizeLimitBytes: 1000, rollOnFileSizeLimit: true, preserveLogFileName: true)
                     .CreateLogger();
                 var longString = new string('0', 1000);
                 log.Information(longString);
