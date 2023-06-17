@@ -30,7 +30,7 @@ public sealed class FileSink : IFileSink, IDisposable
     /// <remarks>This constructor preserves compatibility with early versions of the public API. New code should not depend on this type.</remarks>
     /// <exception cref="IOException"></exception>
     [Obsolete("This type and constructor will be removed from the public API in a future version; use `WriteTo.FileEx()` instead.")]
-    public FileSink(string path, ITextFormatter textFormatter, long? fileSizeLimitBytes, Encoding encoding = null!, bool buffered = false)
+    public FileSink(string path, ITextFormatter textFormatter, long? fileSizeLimitBytes, Encoding? encoding = null, bool buffered = false)
         : this(path, textFormatter, fileSizeLimitBytes, encoding, buffered, null)
     {
     }
@@ -40,13 +40,13 @@ public sealed class FileSink : IFileSink, IDisposable
         string path,
         ITextFormatter textFormatter,
         long? fileSizeLimitBytes,
-        Encoding encoding,
+        Encoding? encoding,
         bool buffered,
         FileLifecycleHooks? hooks)
     {
         if (path == null) throw new ArgumentNullException(nameof(path));
 
-        if (fileSizeLimitBytes is < 0) throw new ArgumentException("Negative value provided; file size limit must be non-negative.");
+        if (fileSizeLimitBytes is < 1) throw new ArgumentException("Invalid value provided; file size limit must be at least 1 byte, or null.");
 
         _textFormatter = textFormatter ?? throw new ArgumentNullException(nameof(textFormatter));
         _fileSizeLimitBytes = fileSizeLimitBytes;
@@ -59,10 +59,15 @@ public sealed class FileSink : IFileSink, IDisposable
         }
 
         Stream outputStream = _underlyingStream = File.Open(path, FileMode.Append, FileAccess.Write, FileShare.Read);
+        outputStream.Seek(0, SeekOrigin.End);
+
         if (_fileSizeLimitBytes != null)
         {
             outputStream = _countingStreamWrapper = new WriteCountingStream(_underlyingStream);
         }
+
+        // Parameter reassignment.
+        encoding ??= new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
         if (hooks != null)
         {

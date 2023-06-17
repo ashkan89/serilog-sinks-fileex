@@ -12,7 +12,8 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
     private readonly ITextFormatter _textFormatter;
     private readonly long? _fileSizeLimitBytes;
     private readonly int? _retainedFileCountLimit;
-    private readonly Encoding _encoding;
+    readonly TimeSpan? _retainedFileTimeLimit;
+    private readonly Encoding? _encoding;
     private readonly bool _buffered;
     private readonly bool _shared;
     private readonly bool _rollOnFileSizeLimit;
@@ -24,7 +25,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
     private readonly object _syncRoot = new();
     private bool _isDisposed;
     private DateTime? _nextCheckpoint;
-    private IFileSink _currentFile = null!;
+    private IFileSink? _currentFile;
     private int? _currentFileSequence;
     private bool _initialCall = true;
     private string _currentFilePath = string.Empty;
@@ -36,29 +37,28 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
         ITextFormatter textFormatter,
         long? fileSizeLimitBytes,
         int? retainedFileCountLimit,
-        Encoding encoding,
+        Encoding? encoding,
         bool buffered,
         bool shared,
         RollingInterval rollingInterval,
         bool rollOnFileSizeLimit,
         FileLifecycleHooks? hooks,
+        TimeSpan? retainedFileTimeLimit,
         string? periodFormat = default,
         bool preserveLogFileName = false,
         bool rollOnEachProcessRun = true,
         bool useLastWriteAsTimestamp = false)
     {
         if (path == null) throw new ArgumentNullException(nameof(path));
-
-        if (fileSizeLimitBytes is < 0)
-            throw new ArgumentException("Negative value provided; file size limit must be non-negative.");
-
-        if (retainedFileCountLimit is < 1)
-            throw new ArgumentException("Zero or negative value provided; retained file count limit must be at least 1.");
+        if (fileSizeLimitBytes is < 1) throw new ArgumentException("Invalid value provided; file size limit must be at least 1 byte, or null.");
+        if (retainedFileCountLimit is < 1) throw new ArgumentException("Zero or negative value provided; retained file count limit must be at least 1");
+        if (retainedFileTimeLimit.HasValue && retainedFileTimeLimit < TimeSpan.Zero) throw new ArgumentException("Negative value provided; retained file time limit must be non-negative.", nameof(retainedFileTimeLimit));
 
         _roller = new PathRoller(path, periodFormat, rollingInterval);
         _textFormatter = textFormatter;
         _fileSizeLimitBytes = fileSizeLimitBytes;
         _retainedFileCountLimit = retainedFileCountLimit;
+        _retainedFileTimeLimit = retainedFileTimeLimit;
         _encoding = encoding;
         _buffered = buffered;
         _shared = shared;
@@ -81,7 +81,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
             var now = Clock.DateTimeNow;
             AlignCurrentFileTo(now);
 
-            while (_currentFile.EmitOrOverflow(logEvent) == false && _rollOnFileSizeLimit)
+            while (_currentFile?.EmitOrOverflow(logEvent) == false && _rollOnFileSizeLimit)
             {
                 AlignCurrentFileTo(now, nextSequence: true);
             }
@@ -170,6 +170,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
             .FirstOrDefault();
 
         var sequence = latestForThisCheckpoint?.SequenceNumber;
+
         if (_preserveLogFileName)
         {
             //Sequence number calculation is wrong when keeping filename. If there is an existing log file, latestForThisCheckpoint won't be null but will report
@@ -262,7 +263,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
                     throw;
                 }
 
-                ApplyRetentionPolicy(currentPath);
+                ApplyRetentionPolicy(currentPath, now);
             }
         }
         else
@@ -310,7 +311,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
                     throw;
                 }
 
-                ApplyRetentionPolicy(path);
+                ApplyRetentionPolicy(path, now);
                 _nextCheckpoint = _roller.GetNextCheckpoint(now) ?? now.AddMinutes(30);
 
                 return;
@@ -338,9 +339,9 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
         return fileInfo.Exists && fileInfo.LastWriteTime < currentCheckpoint;
     }
 
-    private void ApplyRetentionPolicy(string currentFilePath)
+    private void ApplyRetentionPolicy(string currentFilePath, DateTime now)
     {
-        if (_retainedFileCountLimit == null) return;
+        if (_retainedFileCountLimit == null && _retainedFileTimeLimit == null) return;
 
         var currentFileName = Path.GetFileName(currentFilePath);
 
@@ -354,12 +355,14 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
         var newestFirst = _roller
             .SelectMatches(potentialMatches)
             .OrderByDescending(m => m.DateTime)
-            .ThenByDescending(m => m.SequenceNumber)
-            .Select(m => m.Filename);
+            .ThenByDescending(m => m.SequenceNumber);
+        //.Select(m => m.Filename);
 
         var toRemove = newestFirst
-            .Where(n => _preserveLogFileName || StringComparer.OrdinalIgnoreCase.Compare(currentFileName, n) != 0)
-            .Skip(_retainedFileCountLimit.Value - 1)
+            .Where(n => _preserveLogFileName || StringComparer.OrdinalIgnoreCase.Compare(currentFileName, n.Filename) != 0)
+            //.Skip(_retainedFileCountLimit.Value - 1)
+            .SkipWhile((f, i) => ShouldRetainFile(f, i, now))
+            .Select(x => x.Filename)
             .ToList();
 
         foreach (var fullPath in toRemove.Select(obsolete => Path.Combine(_roller.LogFileDirectory, obsolete)))
@@ -376,10 +379,25 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
         }
     }
 
+    private bool ShouldRetainFile(RollingLogFile file, int index, DateTime now)
+    {
+        if (_retainedFileCountLimit.HasValue && index >= _retainedFileCountLimit.Value - 1)
+            return false;
+
+        if (_retainedFileTimeLimit.HasValue && file.DateTime.HasValue &&
+            file.DateTime.Value < now.Subtract(_retainedFileTimeLimit.Value))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     public void Dispose()
     {
         lock (_syncRoot)
         {
+            if (_currentFile == null) return;
             CloseFile();
             _isDisposed = true;
         }
@@ -387,8 +405,11 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
 
     private void CloseFile()
     {
-        (_currentFile as IDisposable)?.Dispose();
-        _currentFile = null!;
+        if (_currentFile != null)
+        {
+            (_currentFile as IDisposable)?.Dispose();
+            _currentFile = null;
+        }
 
         _nextCheckpoint = null;
     }
@@ -397,7 +418,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
     {
         lock (_syncRoot)
         {
-            _currentFile.FlushToDisk();
+            _currentFile?.FlushToDisk();
         }
     }
 }

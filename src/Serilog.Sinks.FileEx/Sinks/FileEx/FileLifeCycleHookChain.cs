@@ -46,4 +46,24 @@ public class FileLifeCycleHookChain : FileLifecycleHooks
         _first.OnFileDeleting(path);
         _second.OnFileDeleting(path);
     }
+
+    /// <summary>
+    /// OnFileRolling
+    /// </summary>
+    /// <param name="path"></param>
+    public override void OnFileRolling(string path)
+    {
+        _first.OnFileRolling(path);
+        _second.OnFileRolling(path);
+    }
+
+    /// <summary>
+    /// OnFileRolled
+    /// </summary>
+    /// <param name="path"></param>
+    public override void OnFileRolled(string path)
+    {
+        _first.OnFileRolled(path);
+        _second.OnFileRolled(path);
+    }
 }

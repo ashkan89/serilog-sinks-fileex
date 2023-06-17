@@ -80,6 +80,7 @@ internal class PathRoller
 
             DateTime? period = null;
             var periodGroup = match.Groups[PeriodMatchGroup];
+
             if (periodGroup.Captures.Count != 0)
             {
                 var dateTimePart = periodGroup.Captures[0].Value;

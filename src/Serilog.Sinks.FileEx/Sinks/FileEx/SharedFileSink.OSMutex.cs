@@ -33,11 +33,12 @@ public sealed class SharedFileSink : IFileSink, IDisposable
     /// <returns>Configuration object allowing method chaining.</returns>
     /// <remarks>The file will be written using the UTF-8 character set.</remarks>
     /// <exception cref="IOException"></exception>
-    public SharedFileSink(string path, ITextFormatter textFormatter, long? fileSizeLimitBytes, Encoding encoding = null!)
+    public SharedFileSink(string path, ITextFormatter textFormatter, long? fileSizeLimitBytes, Encoding? encoding = null!)
     {
         if (path == null) throw new ArgumentNullException(nameof(path));
-        if (fileSizeLimitBytes is < 0)
-            throw new ArgumentException("Negative value provided; file size limit must be non-negative");
+        if (fileSizeLimitBytes is < 1)
+            throw new ArgumentException("Invalid value provided; file size limit must be at least 1 byte, or null.");
+
         _textFormatter = textFormatter ?? throw new ArgumentNullException(nameof(textFormatter));
         _fileSizeLimitBytes = fileSizeLimitBytes;
 
@@ -49,8 +50,8 @@ public sealed class SharedFileSink : IFileSink, IDisposable
 
         var mutexName = Path.GetFullPath(path).Replace(Path.DirectorySeparatorChar, ':') + MutexNameSuffix;
         _mutex = new Mutex(false, mutexName);
-        _underlyingStream = System.IO.File.Open(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
-        _output = new StreamWriter(_underlyingStream, encoding);
+        _underlyingStream = File.Open(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+        _output = new StreamWriter(_underlyingStream, encoding ?? new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
     }
 
     bool IFileSink.EmitOrOverflow(LogEvent logEvent)
@@ -74,6 +75,7 @@ public sealed class SharedFileSink : IFileSink, IDisposable
                 _textFormatter.Format(logEvent, _output);
                 _output.Flush();
                 _underlyingStream.Flush();
+
                 return true;
             }
             finally

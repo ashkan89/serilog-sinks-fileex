@@ -1,11 +1,10 @@
 ﻿#if ATOMIC_APPEND
 
+using System.Text;
 using Serilog.Events;
 using Serilog.Formatting;
-using System.Security.AccessControl;
-using System.Text;
 
-namespace Serilog.Sinks.File.FileEx;
+namespace Serilog.Sinks.FileEx;
 
 /// <summary>
 /// Write log events to a disk file.
@@ -35,10 +34,10 @@ public sealed class SharedFileSink : IFileSink, IDisposable
     /// <param name="encoding">Character encoding used to write the text file. The default is UTF-8 without BOM.</param>
     /// <returns>Configuration object allowing method chaining.</returns>
     /// <exception cref="IOException"></exception>
-    public SharedFileSink(string path, ITextFormatter textFormatter, long? fileSizeLimitBytes, Encoding encoding = null)
+    public SharedFileSink(string path, ITextFormatter textFormatter, long? fileSizeLimitBytes, Encoding? encoding = null)
     {
-        if (fileSizeLimitBytes is < 0)
-            throw new ArgumentException("Negative value provided; file size limit must be non-negative");
+        if (fileSizeLimitBytes.HasValue && fileSizeLimitBytes < 1)
+            throw new ArgumentException("Invalid value provided; file size limit must be at least 1 byte, or null");
 
         _path = path ?? throw new ArgumentNullException(nameof(path));
         _textFormatter = textFormatter ?? throw new ArgumentNullException(nameof(textFormatter));
@@ -62,7 +61,7 @@ public sealed class SharedFileSink : IFileSink, IDisposable
 
         _writeBuffer = new MemoryStream();
         _output = new StreamWriter(_writeBuffer,
-            encoding);
+            encoding ?? new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
     }
 
     bool IFileSink.EmitOrOverflow(LogEvent logEvent)
@@ -75,8 +74,10 @@ public sealed class SharedFileSink : IFileSink, IDisposable
             {
                 _textFormatter.Format(logEvent, _output);
                 _output.Flush();
+
                 var bytes = _writeBuffer.GetBuffer();
                 var length = (int)_writeBuffer.Length;
+
                 if (length > _fileStreamBufferLength)
                 {
                     var oldOutput = _fileOutput;
@@ -105,6 +106,7 @@ public sealed class SharedFileSink : IFileSink, IDisposable
 
                 _fileOutput.Write(bytes, 0, length);
                 _fileOutput.Flush();
+
                 return true;
             }
             catch
@@ -139,7 +141,7 @@ public sealed class SharedFileSink : IFileSink, IDisposable
         }
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="FlushToDisk" />
     public void FlushToDisk()
     {
         lock (_syncRoot)
