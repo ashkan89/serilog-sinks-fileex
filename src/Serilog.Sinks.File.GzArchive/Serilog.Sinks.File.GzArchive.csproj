@@ -4,8 +4,8 @@
     <Description>Plugin for the Serilog File sink that archives completed log files, optionally compressing them.</Description>
     <VersionPrefix>1.1.1</VersionPrefix>
     <Authors>Ashkan Shirian</Authors>
-    <Copyright>Copyright © Ashkan Shirian 2023</Copyright>
-    <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard1.5;netstandard1.6;netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0;net7.0</TargetFrameworks>
+    <Copyright>Copyright © Ashkan Shirian and cocowalla 2023</Copyright>
+    <TargetFrameworks>netstandard1.5;netstandard1.6;netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0;net7.0</TargetFrameworks>
     <LangVersion>11.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -60,6 +60,10 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>

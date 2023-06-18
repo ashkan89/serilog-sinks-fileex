@@ -1,6 +1,21 @@
-﻿using Serilog.Debugging;
+﻿// Copyright 2023 Ashkan Shirian and cocowalla
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using Serilog.Debugging;
 using System.IO.Compression;
 using Serilog.Sinks.FileEx;
+using System.Text;
 
 namespace Serilog.Sinks.File.GzArchive;
 
@@ -10,12 +25,14 @@ namespace Serilog.Sinks.File.GzArchive;
 public class FileArchiveRollingHooks : FileLifecycleHooks
 {
     private readonly CompressionLevel _compressionLevel;
+    private readonly int _bufferSize;
     private readonly string? _fileNameFormat;
     private readonly int _retainedFileCountLimit;
     private readonly string? _targetDirectory;
     private readonly CompressSenario _compressSenario;
     private const int DefaultRetainedFileCountLimit = 31;
     private const string DefaultFileFormat = "yyyyMMdd";
+    private const int DefaultBufferSize = 32 * 1024;
 
     /// <summary>
     /// Create a new FileArchiveRollingHooks, which will archive completed log files before they are deleted by Serilog's retention mechanism
@@ -33,6 +50,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
 
         _fileNameFormat = DefaultFileFormat;
         _compressionLevel = compressionLevel;
+        _bufferSize = DefaultBufferSize;
         _targetDirectory = targetDirectory;
         _compressSenario = CompressSenario.OnDelete;
     }
@@ -43,12 +61,14 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
     /// <param name="retainedFileCountLimit"></param>
     /// <param name="compressionLevel"></param>
     /// <param name="compressSenario"></param>
+    /// <param name="bufferSize"></param>
     /// <param name="fileNameFormat"></param>
     /// <param name="targetDirectory"></param>
     /// <exception cref="ArgumentException"></exception>
     public FileArchiveRollingHooks(CompressionLevel compressionLevel = CompressionLevel.Fastest,
         int retainedFileCountLimit = DefaultRetainedFileCountLimit,
         CompressSenario compressSenario = CompressSenario.OnDelete,
+        int bufferSize = DefaultBufferSize,
       string? fileNameFormat = default,
       string? targetDirectory = default)
     {
@@ -62,10 +82,27 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
             throw new ArgumentException($@"{nameof(compressionLevel)} must not be 'NoCompression' when using {nameof(retainedFileCountLimit)}", nameof(compressionLevel));
 
         _compressionLevel = compressionLevel;
+        _bufferSize = bufferSize;
         _fileNameFormat = fileNameFormat ?? DefaultFileFormat;
         _retainedFileCountLimit = retainedFileCountLimit;
         _targetDirectory = targetDirectory;
         _compressSenario = compressSenario;
+    }
+
+    /// <summary>
+    /// OnFileDeleting
+    /// </summary>
+    /// <param name="underlyingStream"></param>
+    /// <param name="_"></param>
+    public override Stream OnFileOpened(Stream underlyingStream, Encoding _)
+    {
+        if (_compressSenario.HasFlag(CompressSenario.CompressStream))
+        {
+            var compressStream = new GZipStream(underlyingStream, _compressionLevel);
+            return new BufferedStream(compressStream, _bufferSize);
+        }
+
+        return underlyingStream;
     }
 
     /// <summary>
@@ -139,9 +176,9 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
         var str1 = _targetDirectory != null ? TokenExpander.Expand(_targetDirectory) : Path.GetDirectoryName(path)!;
 
         if (!Directory.Exists(str1))
-            Directory.CreateDirectory(str1!);
+            Directory.CreateDirectory(str1);
 
-        var str2 = Path.Combine(str1!, path2);
+        var str2 = Path.Combine(str1, path2);
 
         if (_compressionLevel == CompressionLevel.NoCompression)
         {
@@ -159,7 +196,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
         if (_retainedFileCountLimit <= 0 || IsArchivePathTokenised)
             return;
 
-        RemoveExcessFiles(str1!);
+        RemoveExcessFiles(str1);
     }
 
     private class LogFileComparer : IComparer<FileInfo>
