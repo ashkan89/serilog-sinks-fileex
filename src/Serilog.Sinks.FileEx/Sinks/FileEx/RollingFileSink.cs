@@ -146,7 +146,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
                 .Select(Path.GetFileName);
 
             var newestFile = _roller
-                .SelectMatches(potentialMatches)
+                .SelectMatches(potentialMatches!)
                 .OrderByDescending(m => m.DateTime)
                 .ThenByDescending(m => m.SequenceNumber)
                 .FirstOrDefault();
@@ -170,7 +170,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
             if (Directory.Exists(_roller.LogFileDirectory))
             {
                 existingFiles = Directory.GetFiles(_roller.LogFileDirectory, _roller.DirectorySearchPattern)
-                    .Select(Path.GetFileName);
+                    .Select(Path.GetFileName)!;
             }
         }
         catch (DirectoryNotFoundException)
@@ -367,7 +367,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
             .Union(new[] { currentFileName });
 
         var newestFirst = _roller
-            .SelectMatches(potentialMatches)
+            .SelectMatches(potentialMatches!)
             .OrderByDescending(m => m.DateTime)
             .ThenByDescending(m => m.SequenceNumber);
         //.Select(m => m.Filename);
