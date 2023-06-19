@@ -26,7 +26,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
     private readonly ITextFormatter _textFormatter;
     private readonly long? _fileSizeLimitBytes;
     private readonly int? _retainedFileCountLimit;
-    readonly TimeSpan? _retainedFileTimeLimit;
+    private readonly TimeSpan? _retainedFileTimeLimit;
     private readonly Encoding? _encoding;
     private readonly bool _buffered;
     private readonly bool _shared;

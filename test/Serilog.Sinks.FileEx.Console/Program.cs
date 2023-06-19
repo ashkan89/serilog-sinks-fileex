@@ -14,7 +14,7 @@ Log.Logger = new LoggerConfiguration()
     .FileEx("logs/LogFile.log", "-yyyy-MM-dd-HHmm", LogEventLevel.Debug, rollingInterval: RollingInterval.Minute, rollOnEachProcessRun: false,
         fileSizeLimitBytes: (10L * 1024), rollOnFileSizeLimit: true, retainedFileCountLimit: 5, preserveLogFileName: true,
         hooks: new FileArchiveRollingHooks(CompressionLevel.SmallestSize,
-            targetDirectory: "logs", fileNameFormat: "-yyyy-MM-dd",
+            targetDirectory: "logs", fileNameFormat: "-yyyy-MM-ddHHmm",
             //compressSenario: CompressSenario.OnDelete | CompressSenario.OnRoll,
             compressSenario: CompressSenario.OnRoll,
             retainedFileCountLimit: 31))
