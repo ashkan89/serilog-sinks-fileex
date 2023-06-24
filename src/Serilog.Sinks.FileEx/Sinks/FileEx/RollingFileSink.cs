@@ -201,7 +201,15 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
                 sequence++;
             }
         }
-        if (minSequence != null)
+
+        if (_preserveLogFileName && minSequence != null)
+        {
+            if (sequence != null)
+            {
+                sequence = minSequence;
+            }
+        }
+        else if (minSequence != null)
         {
             if (sequence == null || sequence.Value < minSequence.Value)
                 sequence = minSequence;
