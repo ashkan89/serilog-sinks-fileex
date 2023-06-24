@@ -42,7 +42,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
     private IFileSink? _currentFile;
     private int? _currentFileSequence;
     private bool _initialCall = true;
-    private string _currentFilePath = string.Empty;
+    private string? _currentFilePath;
 
     private readonly object _syncLock = new();
 
@@ -82,6 +82,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
         _rollOnEachProcessRun = rollOnEachProcessRun;
         _useLastWriteAsTimestamp = useLastWriteAsTimestamp;
         _currentFileSequence = GetCurrentSequence();
+        _currentFilePath = GetCurrentFilePath();
     }
 
     public void Emit(LogEvent logEvent)
@@ -157,6 +158,27 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
         return currentSequence;
     }
 
+    private string? GetCurrentFilePath()
+    {
+        var currentFileName = string.Empty;
+
+        if (_rollOnEachProcessRun)
+        {
+            var potentialMatches = Directory.GetFiles(_roller.LogFileDirectory, _roller.DirectorySearchPattern)
+                .Select(Path.GetFileName);
+
+            var newestFile = _roller
+                .SelectMatches(potentialMatches!)
+                .OrderByDescending(m => m.DateTime)
+                .ThenByDescending(m => m.SequenceNumber)
+                .FirstOrDefault();
+
+            currentFileName = newestFile == null ? null : Path.Combine(_roller.LogFileDirectory, newestFile.FileName);
+        }
+
+        return currentFileName;
+    }
+
     private void OpenFile(DateTime now, int? minSequence = null)
     {
         var currentCheckpoint = _roller.GetCurrentCheckpoint(now);
@@ -187,8 +209,8 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
 
         if (_preserveLogFileName)
         {
-            //Sequence number calculation is wrong when keeping filename. If there is an existing log file, latestForThisCheckpoint won't be null but will report
-            // a sequence number of 0 because filename will be (log.txt), if there are two files: sequence number will report 1 (log.txt, log-001.txt).
+            //Sequence number calculation is wrong when keeping fileName. If there is an existing log file, latestForThisCheckpoint won't be null but will report
+            // a sequence number of 0 because fileName will be (log.txt), if there are two files: sequence number will report 1 (log.txt, log-001.txt).
             // But it should report 1 in the first case and 2 in the second case.
             //
             if (sequence == null)
@@ -300,7 +322,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
                     var mustRoll = !string.IsNullOrEmpty(_currentFilePath) && Path.GetFileName(path) != Path.GetFileName(_currentFilePath);
                     if (mustRoll)
                     {
-                        _hooks?.OnFileRolling(_currentFilePath);
+                        _hooks?.OnFileRolling(_currentFilePath!);
                     }
 
                     _currentFile = _shared
@@ -313,7 +335,7 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
 
                     if (mustRoll)
                     {
-                        _hooks?.OnFileRolled(_currentFilePath);
+                        _hooks?.OnFileRolled(_currentFilePath!);
                     }
 
                     _currentFilePath = path;
@@ -378,13 +400,13 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
             .SelectMatches(potentialMatches!)
             .OrderByDescending(m => m.DateTime)
             .ThenByDescending(m => m.SequenceNumber);
-        //.Select(m => m.Filename);
+        //.Select(m => m.FileName);
 
         var toRemove = newestFirst
-            .Where(n => _preserveLogFileName || StringComparer.OrdinalIgnoreCase.Compare(currentFileName, n.Filename) != 0)
+            .Where(n => _preserveLogFileName || StringComparer.OrdinalIgnoreCase.Compare(currentFileName, n.FileName) != 0)
             //.Skip(_retainedFileCountLimit.Value - 1)
             .SkipWhile((f, i) => ShouldRetainFile(f, i, now))
-            .Select(x => x.Filename)
+            .Select(x => x.FileName)
             .ToList();
 
         foreach (var fullPath in toRemove.Select(obsolete => Path.Combine(_roller.LogFileDirectory, obsolete)))

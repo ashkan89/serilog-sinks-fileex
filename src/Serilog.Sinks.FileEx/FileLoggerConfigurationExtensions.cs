@@ -90,7 +90,7 @@ public static class FileLoggerConfigurationExtensions
     /// <param name="flushToDiskInterval">If provided, a full disk flush will be performed periodically at the specified interval.</param>
     /// <param name="rollingInterval">The interval at which logging will roll over to a new file.</param>
     /// <param name="rollOnFileSizeLimit">If <code>true</code>, a new file will be created when the file size limit is reached. FileNames
-    /// will have a number appended in the format <code>_NNN</code>, with the first filename given no number.</param>
+    /// will have a number appended in the format <code>_NNN</code>, with the first fileName given no number.</param>
     /// <param name="retainedFileCountLimit">The maximum number of log files that will be retained,
     /// including the current log file. For unlimited retention, pass null. The default is 31.</param>
     /// <param name="encoding">Character encoding used to write the text file. The default is UTF-8 without BOM.</param>
@@ -136,7 +136,7 @@ public static class FileLoggerConfigurationExtensions
     /// <param name="flushToDiskInterval">If provided, a full disk flush will be performed periodically at the specified interval.</param>
     /// <param name="rollingInterval">The interval at which logging will roll over to a new file.</param>
     /// <param name="rollOnFileSizeLimit">If <code>true</code>, a new file will be created when the file size limit is reached. FileNames
-    /// will have a number appended in the format <code>_NNN</code>, with the first filename given no number.</param>
+    /// will have a number appended in the format <code>_NNN</code>, with the first fileName given no number.</param>
     /// <param name="retainedFileCountLimit">The maximum number of log files that will be retained,
     /// including the current log file. For unlimited retention, pass null. The default is 31.</param>
     /// <param name="encoding">Character encoding used to write the text file. The default is UTF-8 without BOM.</param>
@@ -360,7 +360,7 @@ public static class FileLoggerConfigurationExtensions
     /// <param name="flushToDiskInterval">If provided, a full disk flush will be performed periodically at the specified interval.</param>
     /// <param name="rollingInterval">The interval at which logging will roll over to a new file.</param>
     /// <param name="rollOnFileSizeLimit">If <code>true</code>, a new file will be created when the file size limit is reached. FileNames
-    /// will have a number appended in the format <code>_NNN</code>, with the first filename given no number.</param>
+    /// will have a number appended in the format <code>_NNN</code>, with the first fileName given no number.</param>
     /// <param name="retainedFileCountLimit">The maximum number of log files that will be retained,
     /// including the current log file. For unlimited retention, pass null. The default is 31.</param>
     /// <param name="encoding">Character encoding used to write the text file. The default is UTF-8 without BOM.</param>
@@ -427,7 +427,7 @@ public static class FileLoggerConfigurationExtensions
     /// <param name="flushToDiskInterval">If provided, a full disk flush will be performed periodically at the specified interval.</param>
     /// <param name="rollingInterval">The interval at which logging will roll over to a new file.</param>
     /// <param name="rollOnFileSizeLimit">If <code>true</code>, a new file will be created when the file size limit is reached. FileNames
-    /// will have a number appended in the format <code>_NNN</code>, with the first filename given no number.</param>
+    /// will have a number appended in the format <code>_NNN</code>, with the first fileName given no number.</param>
     /// <param name="retainedFileCountLimit">The maximum number of log files that will be retained,
     /// including the current log file. For unlimited retention, pass null. The default is 31.</param>
     /// <param name="encoding">Character encoding used to write the text file. The default is UTF-8 without BOM.</param>

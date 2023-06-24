@@ -16,14 +16,14 @@ namespace Serilog.Sinks.FileEx;
 
 internal class RollingLogFile
 {
-    public RollingLogFile(string filename, DateTime? dateTime, int? sequenceNumber)
+    public RollingLogFile(string fileName, DateTime? dateTime, int? sequenceNumber)
     {
-        Filename = filename;
+        FileName = fileName;
         DateTime = dateTime;
         SequenceNumber = sequenceNumber;
     }
 
-    public string Filename { get; }
+    public string FileName { get; }
 
     public DateTime? DateTime { get; }
 
