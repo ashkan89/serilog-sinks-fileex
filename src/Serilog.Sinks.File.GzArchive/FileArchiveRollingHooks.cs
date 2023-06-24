@@ -16,6 +16,7 @@ using Serilog.Debugging;
 using System.IO.Compression;
 using Serilog.Sinks.FileEx;
 using System.Text;
+using System.Globalization;
 
 namespace Serilog.Sinks.File.GzArchive;
 
@@ -165,9 +166,36 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
 
     private string GenerateFileName(string path)
     {
-        return _compressionLevel != CompressionLevel.NoCompression ?
-            $"{Path.GetFileName(path)}{DateTime.Now.ToString(_fileNameFormat)}.gz" :
-            $"{Path.GetFileNameWithoutExtension(path)}{DateTime.Now.ToString(_fileNameFormat)}.{Path.GetExtension(path)}";
+        int? sequenceNumber = default;
+        var currentDirectory = Path.GetDirectoryName(path);
+        var filenamePrefix = Path.GetFileNameWithoutExtension(path);
+        var filenameSuffix = Path.GetExtension(path);
+        var currentCheckPoint = DateTime.Now.ToString(_fileNameFormat, CultureInfo.InvariantCulture);
+        string filePath;
+
+        do
+        {
+            var token = currentCheckPoint;
+
+            if (sequenceNumber != null)
+                token += "_" + sequenceNumber.Value.ToString("000", CultureInfo.InvariantCulture);
+
+            filePath = _compressionLevel != CompressionLevel.NoCompression
+                ? Path.Combine(currentDirectory!, $"{filenamePrefix}{token}.gz")
+                : Path.Combine(currentDirectory!, $"{filenamePrefix}{token}{filenameSuffix}");
+
+            if (sequenceNumber == null)
+            {
+                sequenceNumber = 1;
+            }
+            else
+            {
+                sequenceNumber++;
+            }
+
+        } while (System.IO.File.Exists(filePath));
+
+        return Path.GetFileName(filePath);
     }
 
     private void CompressFile(string path)
