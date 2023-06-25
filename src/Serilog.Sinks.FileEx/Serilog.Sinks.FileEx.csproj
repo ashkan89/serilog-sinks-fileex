@@ -27,7 +27,7 @@
 - Fix OnRoll file path name issue
 - Various bug fix and improvements</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageReadmeFile></PackageReadmeFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>serilog-sink-nuget.png</PackageIcon>
     <PackageId></PackageId>
   </PropertyGroup>
