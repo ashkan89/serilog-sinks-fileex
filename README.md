@@ -337,22 +337,22 @@ log_2018-07-01.gz
 log_2018-07-02.gz
 ```
 
-If you want to configure a custom senario for archiving, Set the parameter compressSenario to a `CompressSenario` enum value.
+If you want to configure a custom scenario for archiving, Set the parameter compressScenario to a `CompressScenario` enum value.
 
 ```csharp
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.FileEx("log.txt", hooks: new FileArchiveRollingHooks(CompressionLevel.SmallestSize), targetDirectory: "C:\\My\\Archive\\Path", fileNameFormat: "-yyyy-MM-dd", compressSenario: CompressSenario.OnDelete)
+    .WriteTo.FileEx("log.txt", hooks: new FileArchiveRollingHooks(CompressionLevel.SmallestSize), targetDirectory: "C:\\My\\Archive\\Path", fileNameFormat: "-yyyy-MM-dd", compressScenario: CompressScenario.OnDelete)
     .CreateLogger();
 ```
-Available Values for CompressSenario:
+Available Values for CompressScenario:
 
 ```csharp
-CompressSenario.OnDelete
-CompressSenario.OnRole
-CompressSenario.CompressStream
+CompressScenario.OnDelete
+CompressScenario.OnRole
+CompressScenario.CompressStream
 ```
 
-Note that you cannot set `CompressSenario.OnDelete` or `CompressSenario.OnRolle` with `CompressSenario.CompressStream` together.
+Note that you cannot set `CompressScenario.OnDelete` or `CompressScenario.OnRolle` with `CompressScenario.CompressStream` together.
 
 Note that archival only works with *rolling* log files, as files are only deleted or being rolled by Serilog's rolling file retention mechanism.
 As is [standard with Serilog](https://github.com/serilog/serilog/wiki/Lifecycle-of-Loggers#in-all-apps), it's important to call `Log.CloseAndFlush();` before your application ends.
