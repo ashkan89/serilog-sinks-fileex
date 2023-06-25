@@ -15,7 +15,7 @@
 namespace Serilog.Sinks.File.GzArchive;
 
 [Flags]
-public enum CompressSenario
+public enum CompressScenario
 {
     OnRoll = 1,
     OnDelete = 2,

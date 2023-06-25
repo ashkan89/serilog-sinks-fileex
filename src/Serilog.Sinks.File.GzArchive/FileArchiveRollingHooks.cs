@@ -30,7 +30,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
     private readonly string? _fileNameFormat;
     private readonly int _retainedFileCountLimit;
     private readonly string? _targetDirectory;
-    private readonly CompressSenario _compressSenario;
+    private readonly CompressScenario _compressScenario;
     private const int DefaultRetainedFileCountLimit = 31;
     private const string DefaultFileFormat = "yyyyMMdd";
     private const int DefaultBufferSize = 32 * 1024;
@@ -53,7 +53,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
         _compressionLevel = compressionLevel;
         _bufferSize = DefaultBufferSize;
         _targetDirectory = targetDirectory;
-        _compressSenario = CompressSenario.OnDelete;
+        _compressScenario = CompressScenario.OnDelete;
     }
 
     /// <summary>
@@ -61,14 +61,14 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
     /// </summary>
     /// <param name="retainedFileCountLimit"></param>
     /// <param name="compressionLevel"></param>
-    /// <param name="compressSenario"></param>
+    /// <param name="compressScenario"></param>
     /// <param name="bufferSize"></param>
     /// <param name="fileNameFormat"></param>
     /// <param name="targetDirectory"></param>
     /// <exception cref="ArgumentException"></exception>
     public FileArchiveRollingHooks(CompressionLevel compressionLevel = CompressionLevel.Fastest,
         int retainedFileCountLimit = DefaultRetainedFileCountLimit,
-        CompressSenario compressSenario = CompressSenario.OnDelete,
+        CompressScenario compressScenario = CompressScenario.OnDelete,
         int bufferSize = DefaultBufferSize,
       string? fileNameFormat = default,
       string? targetDirectory = default)
@@ -87,7 +87,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
         _fileNameFormat = fileNameFormat ?? DefaultFileFormat;
         _retainedFileCountLimit = retainedFileCountLimit;
         _targetDirectory = targetDirectory;
-        _compressSenario = compressSenario;
+        _compressScenario = compressScenario;
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
     /// <param name="_"></param>
     public override Stream OnFileOpened(Stream underlyingStream, Encoding _)
     {
-        if (_compressSenario.HasFlag(CompressSenario.CompressStream))
+        if (_compressScenario.HasFlag(CompressScenario.CompressStream))
         {
             var compressStream = new GZipStream(underlyingStream, _compressionLevel);
             return new BufferedStream(compressStream, _bufferSize);
@@ -114,7 +114,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
     {
         try
         {
-            if (_compressSenario.HasFlag(CompressSenario.OnDelete))
+            if (_compressScenario.HasFlag(CompressScenario.OnDelete))
                 CompressFile(path);
         }
         catch (Exception ex)
@@ -132,7 +132,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
     {
         try
         {
-            if (_compressSenario.HasFlag(CompressSenario.OnRoll))
+            if (_compressScenario.HasFlag(CompressScenario.OnRoll))
                 CompressFile(path);
         }
         catch (Exception ex)
