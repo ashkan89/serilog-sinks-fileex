@@ -1,6 +1,6 @@
 # Serilog.Sinks.File.GzArchive [![Build status](https://ci.appveyor.com/api/projects/status/hh9gymy0n6tne46j?svg=true)](https://ci.appveyor.com/project/serilog/serilog-sinks-file) [![NuGet Version](http://img.shields.io/nuget/v/Serilog.Sinks.File.GzArchive.svg?style=flat)](https://www.nuget.org/packages/Serilog.Sinks.File.GzArchive/) [![Documentation](https://img.shields.io/badge/docs-wiki-yellow.svg)](https://github.com/serilog/serilog/wiki) [![Join the chat at https://gitter.im/serilog/serilog](https://img.shields.io/gitter/room/serilog/serilog.svg)](https://gitter.im/serilog/serilog)
 
-A `FileLifecycleHooks`-based plugin for the [Serilog FileEx Sink](https://github.com/ashkan89/serilog-sinks-fileex) that works with rolling log files, archiving completed log files before they are deleted or being rolled by Serilog's retention mechanism.
+A [`FileLifecycleHooks`](https://github.com/ashkan89/serilog-sinks-fileex/blob/master/src/Serilog.Sinks.FileEx/Sinks/FileEx/FileLifecycleHooks.cs)-based plugin for the [Serilog FileEx Sink](https://github.com/ashkan89/serilog-sinks-fileex) that works with rolling log files, archiving completed log files before they are deleted or being rolled by Serilog's retention mechanism.
 
 The following archive methods are supported:
 
