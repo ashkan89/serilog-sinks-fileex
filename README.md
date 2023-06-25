@@ -274,6 +274,6 @@ You can create a hook by extending from [`FileLifecycleHooks`](https://github.co
 - `OnFileRolled` provides a means to work with rolling log files, *after* they are rolled by Serilog's retention mechanism - for example, to archive log files to another
 
 Available hooks:
-- [serilog-sinks-file-gzarchive](https://github.com/ashkan89/serilog-sinks-file-gzarchive): compresses logs as they are written, using streaming GZIP compression and archives obsolete rolling log files before they are deleted and while rolling by Serilog's retention mechanism
+- [serilog-sinks-file-gzarchive](https://github.com/ashkan89/serilog-sinks-fileex/tree/master/src/Serilog.Sinks.File.GzArchive): compresses logs as they are written, using streaming GZIP compression and archives obsolete rolling log files before they are deleted and while rolling by Serilog's retention mechanism
 
 _Copyright &copy; 2023 Ashkan Shirian and Serilog Contributors - Provided under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html)._
