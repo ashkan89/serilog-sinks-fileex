@@ -315,6 +315,16 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
             const int maxAttempts = 3;
             for (var attempt = 0; attempt < maxAttempts; attempt++)
             {
+                if (currentCheckpoint.HasValue &&  !string.IsNullOrEmpty(_currentFilePath))
+                {
+                    var fileInfo = new FileInfo(_currentFilePath);
+
+                    if (fileInfo.Exists && fileInfo.LastWriteTime < currentCheckpoint)
+                    {
+                        sequence = null;
+                    }
+                }
+
                 _roller.GetLogFilePath(now, sequence, out var path);
 
                 try
