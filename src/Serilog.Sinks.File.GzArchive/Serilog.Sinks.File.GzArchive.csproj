@@ -31,9 +31,8 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Title>Serilog.Sinks.File.GzArchive</Title>
     <PackageReleaseNotes>- Update Dependency Serilog.Sinks.FileEx to 5.1.3
-- Added CompressSenario for multiple compress methods
-- Added Direct stream compress
-- Added Support for OnRolling and OnRolled event
+- Added Sequence number token generation on roll
+- Various bug fix and improvments
     </PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageIcon>serilog-sink-nuget.png</PackageIcon>

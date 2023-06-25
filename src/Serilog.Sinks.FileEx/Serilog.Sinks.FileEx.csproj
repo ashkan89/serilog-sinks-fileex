@@ -22,10 +22,10 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <Title>Serilog.Sinks.FileEx</Title>
-    <PackageReleaseNotes>- Added OnRolling and OnRolled event in FileLifecycleHooks
-- Added retainedFileTimeLimit
-- Reconfigure method overloads
-- Bug fix and improvements</PackageReleaseNotes>
+    <PackageReleaseNotes>- Fixed roll file name sequence when rollOnEachProcessRun is set to true
+- Fixed wrong sequence number on first roll when preserveLogFileName is set to true
+- Fix OnRoll file path name issue
+- Various bug fix and improvements</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageReadmeFile></PackageReadmeFile>
     <PackageIcon>serilog-sink-nuget.png</PackageIcon>
