@@ -34,6 +34,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
     private const int DefaultRetainedFileCountLimit = 31;
     private const string DefaultFileFormat = "yyyyMMdd";
     private const int DefaultBufferSize = 32 * 1024;
+    private readonly bool _useLastWriteAsTimestamp;
 
     /// <summary>
     /// Create a new FileArchiveRollingHooks, which will archive completed log files before they are deleted by Serilog's retention mechanism
@@ -54,6 +55,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
         _bufferSize = DefaultBufferSize;
         _targetDirectory = targetDirectory;
         _compressScenario = CompressScenario.OnDelete;
+        _useLastWriteAsTimestamp = false;
     }
 
     /// <summary>
@@ -61,6 +63,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
     /// </summary>
     /// <param name="retainedFileCountLimit"></param>
     /// <param name="compressionLevel"></param>
+    /// <param name="useLastWriteAsTimestamp"></param>
     /// <param name="compressScenario"></param>
     /// <param name="bufferSize"></param>
     /// <param name="fileNameFormat"></param>
@@ -68,6 +71,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
     /// <exception cref="ArgumentException"></exception>
     public FileArchiveRollingHooks(CompressionLevel compressionLevel = CompressionLevel.Fastest,
         int retainedFileCountLimit = DefaultRetainedFileCountLimit,
+        bool useLastWriteAsTimestamp = false,
         CompressScenario compressScenario = CompressScenario.OnDelete,
         int bufferSize = DefaultBufferSize,
       string? fileNameFormat = default,
@@ -86,6 +90,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
         _bufferSize = bufferSize;
         _fileNameFormat = fileNameFormat ?? DefaultFileFormat;
         _retainedFileCountLimit = retainedFileCountLimit;
+        _useLastWriteAsTimestamp = useLastWriteAsTimestamp;
         _targetDirectory = targetDirectory;
         _compressScenario = compressScenario;
     }
@@ -170,7 +175,7 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
         var currentDirectory = Path.GetDirectoryName(path);
         var filenamePrefix = Path.GetFileNameWithoutExtension(path);
         var filenameSuffix = Path.GetExtension(path);
-        var currentCheckPoint = DateTime.Now.ToString(_fileNameFormat, CultureInfo.InvariantCulture);
+        var currentCheckPoint = (_useLastWriteAsTimestamp ? System.IO.File.GetLastWriteTime(path) : DateTime.Now).ToString(_fileNameFormat, CultureInfo.InvariantCulture);
         string filePath;
 
         do
