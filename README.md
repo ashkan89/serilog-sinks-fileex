@@ -325,7 +325,7 @@ If you want to configure a custom rolling date format, Set the parameter fileNam
 
 ```csharp
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.FileEx("log.txt", hooks: new FileArchiveRollingHooks(CompressionLevel.SmallestSize), targetDirectory: "C:\\My\\Archive\\Path", fileNameFormat: "-yyyy-MM-dd")
+    .WriteTo.FileEx("log.txt", hooks: new FileArchiveRollingHooks(CompressionLevel.SmallestSize), targetDirectory: "C:\\My\\Archive\\Path", fileNameFormat: "_yyyy-MM-dd")
     .CreateLogger();
 ```
 
@@ -341,7 +341,7 @@ If you want to configure a custom scenario for archiving, Set the parameter comp
 
 ```csharp
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.FileEx("log.txt", hooks: new FileArchiveRollingHooks(CompressionLevel.SmallestSize), targetDirectory: "C:\\My\\Archive\\Path", fileNameFormat: "-yyyy-MM-dd", compressScenario: CompressScenario.OnDelete)
+    .WriteTo.FileEx("log.txt", hooks: new FileArchiveRollingHooks(CompressionLevel.SmallestSize), targetDirectory: "C:\\My\\Archive\\Path", compressScenario: CompressScenario.OnDelete)
     .CreateLogger();
 ```
 Available Values for CompressScenario:
