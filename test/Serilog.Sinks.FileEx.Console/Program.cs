@@ -11,10 +11,10 @@ var sw = System.Diagnostics.Stopwatch.StartNew();
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo
-    .FileEx("logs/LogFile.log", "-yyyy-MM-dd-HHmm", LogEventLevel.Debug, rollingInterval: RollingInterval.Minute, rollOnEachProcessRun: true,
-        fileSizeLimitBytes: (10L * 1024), rollOnFileSizeLimit: true, retainedFileCountLimit: 5, preserveLogFileName: true, useLastWriteAsTimestamp: true,
+    .FileEx("logs/LogFile.log", "-yyyy-MM-dd-HHmm", LogEventLevel.Debug, rollingInterval: RollingInterval.Minute, rollOnEachProcessRun: false,
+        fileSizeLimitBytes: (10L * 1024), rollOnFileSizeLimit: true, retainedFileCountLimit: 31, preserveLogFileName: true, useLastWriteAsTimestamp: true,
         hooks: new FileArchiveRollingHooks(CompressionLevel.SmallestSize,
-            useLastWriteAsTimestamp: false,
+            useLastWriteAsTimestamp: true,
             targetDirectory: "logs", fileNameFormat: "-yyyy-MM-dd-HHmm",
             //compressScenario: CompressScenario.OnDelete | CompressScenario.OnRoll,
             compressScenario: CompressScenario.OnRoll,
