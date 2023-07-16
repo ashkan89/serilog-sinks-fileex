@@ -337,6 +337,22 @@ log_2018-07-01.gz
 log_2018-07-02.gz
 ```
 
+If you want to use the log file last write time as the rolling date and time instead of the checkpoint, Set the parameter useLastWriteAsTimestamp to true. 
+
+```csharp
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.FileEx("log.txt", "_yyyy-MM-dd", rollingInterval: RollingInterval.Day, useLastWriteAsTimestamp: true, hooks: new FileArchiveRollingHooks(CompressionLevel.SmallestSize), targetDirectory: "C:\\My\\Archive\\Path", useLastWriteAsTimestamp: true, fileNameFormat: "_yyyy-MM-dd")
+    .CreateLogger();
+```
+
+This will append the last write time for the datetime format, create a archive set like:
+
+```
+log_2018-06-31.gz
+log_2018-07-01.gz
+log_2018-07-02.gz
+```
+
 If you want to configure a custom scenario for archiving, Set the parameter compressScenario to a `CompressScenario` enum value.
 
 ```csharp

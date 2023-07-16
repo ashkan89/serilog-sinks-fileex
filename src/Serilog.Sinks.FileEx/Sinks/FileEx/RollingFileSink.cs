@@ -205,7 +205,15 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
             //
             if (sequence == null)
             {
-                if (latestForThisCheckpoint != null)
+                if (_useLastWriteAsTimestamp)
+                {
+                    _roller.GetLogFilePath(out var currentPath);
+                    var fileInfo = new FileInfo(currentPath);
+
+                    sequence = latestForThisCheckpoint != null ? 1 :
+                        fileInfo.LastWriteTime < currentCheckpoint ? GetCurrentSequence() + 1 : null;
+                }
+                else if (latestForThisCheckpoint != null)
                     sequence = 1;
             }
             else
