@@ -30,7 +30,9 @@
     <PackageId>$(AssemblyName)</PackageId>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Title>Serilog.Sinks.File.GzArchive</Title>
-    <PackageReleaseNotes>- Update Dependency Serilog.Sinks.FileEx to 5.1.6</PackageReleaseNotes>
+    <PackageReleaseNotes>- Update Dependency Serilog.Sinks.FileEx to 5.1.6
+- Added useLastWriteAsTimestamp
+- Updated README.md</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageIcon>serilog-sink-nuget.png</PackageIcon>
   </PropertyGroup>
