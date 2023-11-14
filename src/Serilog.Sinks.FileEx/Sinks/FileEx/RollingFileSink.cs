@@ -139,34 +139,48 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
 
     private int? GetCurrentSequence()
     {
-        var potentialMatches = Directory.GetFiles(_roller.LogFileDirectory, _roller.DirectorySearchPattern)
-                .Select(Path.GetFileName);
+        try
+        {
+            var potentialMatches = Directory.GetFiles(_roller.LogFileDirectory, _roller.DirectorySearchPattern)
+                    .Select(Path.GetFileName);
 
-        var newestFile = _roller
-            .SelectMatches(potentialMatches!)
-            .OrderByDescending(m => m.DateTime)
-            .ThenByDescending(m => m.SequenceNumber)
-            .FirstOrDefault();
+            var newestFile = _roller
+                .SelectMatches(potentialMatches!)
+                .OrderByDescending(m => m.DateTime)
+                .ThenByDescending(m => m.SequenceNumber)
+                .FirstOrDefault();
 
-        var currentSequence = newestFile?.SequenceNumber;
+            var currentSequence = newestFile?.SequenceNumber;
 
-        return currentSequence;
+            return currentSequence;
+        }
+        catch (DirectoryNotFoundException)
+        {
+            return null;
+        }
     }
 
     private string? GetCurrentFilePath()
     {
-        var potentialMatches = Directory.GetFiles(_roller.LogFileDirectory, _roller.DirectorySearchPattern)
-            .Select(Path.GetFileName);
+        try
+        {
+            var potentialMatches = Directory.GetFiles(_roller.LogFileDirectory, _roller.DirectorySearchPattern)
+                .Select(Path.GetFileName);
 
-        var newestFile = _roller
-            .SelectMatches(potentialMatches!)
-            .OrderByDescending(m => m.DateTime)
-            .ThenByDescending(m => m.SequenceNumber)
-            .FirstOrDefault();
+            var newestFile = _roller
+                .SelectMatches(potentialMatches!)
+                .OrderByDescending(m => m.DateTime)
+                .ThenByDescending(m => m.SequenceNumber)
+                .FirstOrDefault();
 
-        var currentFileName = newestFile == null ? null : Path.Combine(_roller.LogFileDirectory, newestFile.FileName);
+            var currentFileName = newestFile == null ? null : Path.Combine(_roller.LogFileDirectory, newestFile.FileName);
 
-        return currentFileName;
+            return currentFileName;
+        }
+        catch (DirectoryNotFoundException)
+        {
+            return null;
+        }
     }
 
     private void OpenFile(DateTime now, int? minSequence = null)
@@ -183,6 +197,10 @@ internal sealed class RollingFileSink : ILogEventSink, IFlushableFileSink, IDisp
             {
                 existingFiles = Directory.GetFiles(_roller.LogFileDirectory, _roller.DirectorySearchPattern)
                     .Select(Path.GetFileName)!;
+            }
+            else
+            {
+                Directory.CreateDirectory(_roller.LogFileDirectory);
             }
         }
         catch (DirectoryNotFoundException)
