@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <Description>Plugin for the Serilog File sink that archives completed log files, optionally compressing them.</Description>
-    <VersionPrefix>1.1.7</VersionPrefix>
+    <VersionPrefix>1.1.8</VersionPrefix>
     <Authors>Ashkan Shirian</Authors>
     <Copyright>Copyright © Ashkan Shirian and cocowalla 2023</Copyright>
-    <TargetFrameworks>netstandard1.5;netstandard1.6;netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>netstandard1.5;netstandard1.6;netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
     <LangVersion>11.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -31,8 +31,8 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Title>Serilog.Sinks.File.GzArchive</Title>
     <PackageReleaseNotes>
-      - Update Dependency Serilog.Sinks.FileEx to 5.1.7
-      - Fixed a bug that caused DirectoryNotFound exception when target archive directory not exists.we create the target archive directory if not exists
+      - Update Dependency Serilog.Sinks.FileEx to 5.1.8
+      - Added DotNet 8.0 support
     </PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageIcon>serilog-sink-nuget.png</PackageIcon>
