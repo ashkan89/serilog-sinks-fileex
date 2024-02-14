@@ -83,6 +83,9 @@ public class FileArchiveRollingHooks : FileLifecycleHooks
         if (targetDirectory != null && TokenExpander.IsTokenised(targetDirectory))
             throw new ArgumentException($@"{nameof(targetDirectory)} must not be tokenised when using {nameof(retainedFileCountLimit)}", nameof(targetDirectory));
 
+        if (compressionLevel == CompressionLevel.NoCompression && targetDirectory == null)
+            throw new ArgumentException($"Either {nameof(compressionLevel)} or {nameof(targetDirectory)} must be set");
+
         // Removed to have the possibility to use retainedFileCountLimit and CompressionLevel.NoCompression
         //if (compressionLevel == CompressionLevel.NoCompression)
         //    throw new ArgumentException($@"{nameof(compressionLevel)} must not be 'NoCompression' when using {nameof(retainedFileCountLimit)}", nameof(compressionLevel));
